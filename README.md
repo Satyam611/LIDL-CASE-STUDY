@@ -1,0 +1,1 @@
+# LIDL-CASE-STUDY
