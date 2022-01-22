@@ -1,0 +1,16 @@
+{
+  "application_name": "GSGCaseStudy",
+  "input_path": "../input/",
+  "input_file_format": "csv",
+  "write_mode": "overwrite",
+  "output_path": "../output/",
+  "output_file_format": "csv",
+  "granularity_time": "10",
+  "read_options": {
+    "header": "true",
+    "inferSchema": "true"
+  },
+  "write_options": {
+    "header": "true"
+  }
+}
