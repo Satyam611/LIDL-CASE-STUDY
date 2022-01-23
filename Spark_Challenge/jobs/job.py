@@ -8,7 +8,6 @@ from typing import Tuple
 
 from pyspark.sql.window import Window
 
-sys.path.append(r'C:\Users\satya\Documents\GitHub\LIDL-CASE-STUDY\Spark_Challenge')
 from dependencies.logger import Logging
 from dependencies.config import Config
 from dependencies.spark_components import SparkComponents

@@ -3,12 +3,9 @@ test_cases.py
 This module is for unit testing of the spark application
 """
 import logging
-import sys
 import unittest
 
 from pyspark.sql.functions import col
-import pyspark.sql.functions as f
-sys.path.append(r'C:\Users\satya\Documents\GitHub\LIDL-CASE-STUDY\Spark_Challenge')
 from dependencies.logger import Logging
 from dependencies.spark_components import SparkComponents
 from dependencies.config import Config
