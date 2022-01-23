@@ -4,6 +4,7 @@ This is the main module which will use all the other modules to create and execu
 import logging
 import sys
 import traceback
+from typing import Tuple
 
 from pyspark.sql.window import Window
 
@@ -47,7 +48,7 @@ class ETL:
         except Exception as ee:
             raise ETLException("Error Extracting data.", ee)
 
-    def transform(self, input_df: DataFrame) -> DataFrame:
+    def transform(self, input_df: DataFrame) -> Tuple[DataFrame, DataFrame]:
         """
         This function takes a spark dataframe as input, transform it as per business logic and returns a spark
         dataframe
@@ -62,7 +63,8 @@ class ETL:
                 .pivot("action")\
                 .agg(count("action"))\
 
-            output_df = output_df.withColumn("Close", f.when(col("Close").isNull(), 0).otherwise(col("Close")))\
+            output_df = output_df\
+                .withColumn("Close", f.when(col("Close").isNull(), 0).otherwise(col("Close")))\
                 .drop(output_df.Close) \
                 .withColumn("Open", f.when(col("Open").isNull(), 0).otherwise(col("Open"))) \
                 .drop(output_df.Open)\
@@ -75,27 +77,39 @@ class ETL:
                 .orderBy("window_start_time").drop("window")\
 
             window_spec = Window.orderBy(col("Open").desc())
-            max_actions_df = output_df.withColumn("rank", dense_rank().over(window_spec)).filter("rank = 1")
-            max_actions_df.show(10, False)
+            max_actions_df = output_df\
+                .withColumn("rank", dense_rank().over(window_spec))\
+                .filter("rank = 1")\
+                .drop("rank")
             self.log.info("Data Transformation Completed")
-            return output_df
+            return output_df, max_actions_df
 
         except Exception as ee:
             raise ETLException("Error transforming data.", ee)
 
-    def load(self, output_df: DataFrame) -> None:
+    def load(self, output_df: DataFrame, max_actions_df: DataFrame) -> None:
         """
         This function takes a spark dataframe as input and writes it to path provided input config file
+        :param max_actions_df: Spark dataframe with records with maximum actions in 10 mins
         :param output_df: Spark Dataframe
         :return: None
         """
         try:
             self.log.info("Data Loading Started")
+            self.log.info("Writing Output Dataframe")
             output_df.coalesce(1)\
                 .write.options(**self.job_config['write_options']) \
                 .format(self.job_config['output_file_format']) \
                 .mode(self.job_config['write_mode']) \
-                .save(self.job_config['output_path'])
+                .save(self.job_config['output_path'] + "complete/")
+            self.log.info("Output Dataframe Write Completed")
+            self.log.info("Writing Max Actions Dataframe")
+            max_actions_df.coalesce(1) \
+                .write.options(**self.job_config['write_options']) \
+                .format(self.job_config['output_file_format']) \
+                .mode(self.job_config['write_mode']) \
+                .save(self.job_config['output_path'] + "max_actions/")
+            self.log.info("Max Actions Dataframe Write Completed")
             self.log.info("Data Loading Completed")
 
         except Exception as ee:
@@ -129,10 +143,10 @@ class EtlJob:
             input_df = etl.extract()
             self.log.info("Input Data Extraction Completed")
             self.log.info("Starting Data Transformation")
-            output_df = etl.transform(input_df)
+            output_df, max_actions_df = etl.transform(input_df)
             self.log.info("Data Transformation completed")
             self.log.info("Starting Output Data Loading")
-            etl.load(output_df)
+            etl.load(output_df, max_actions_df)
             self.log.info("Output Data Loading Completed")
             self.log.info("ETL Completed")
             self.log.info("Stopping Spark Session Object")

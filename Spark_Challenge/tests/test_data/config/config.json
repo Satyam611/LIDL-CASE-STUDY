@@ -1,9 +1,9 @@
 {
-  "application_name": "GSGCaseStudy",
-  "input_path": "../input/",
+  "application_name": "LidlCaseStudyTesting",
+  "input_path": "./test_data/input_data/",
   "input_file_format": "csv",
   "write_mode": "overwrite",
-  "output_path": "../output/",
+  "output_path": "./test_data/output_data/",
   "output_file_format": "csv",
   "granularity_time": "10",
   "read_options": {
