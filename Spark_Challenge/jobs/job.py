@@ -59,6 +59,9 @@ class ETL:
             self.log.info("Data Transformation Started")
             granularity_in_minutes = int(self.job_config['granularity_time'])
             output_df = input_df\
+                .withColumn("action", f.initcap(col("action")))\
+                .drop(input_df.action) \
+                .filter(col("action").isin(['Open', 'Close'])) \
                 .groupBy(window("time", str(granularity_in_minutes) + " minutes"))\
                 .pivot("action")\
                 .agg(count("action"))\
