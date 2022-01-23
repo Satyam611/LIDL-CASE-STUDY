@@ -71,6 +71,13 @@ config.json : We have created one json file which provides the details to job to
 ### Test Data:
 We are using input file provided as test data.
 
+### Output
+
+Output of the application is present in 'output' folder. It is structured below:
+- output
+  - complete (This folder contains the complete output of the application)
+  - max_actions (This folder contains the file with maximum 'Open' actions in 10 mins)  
+
 ## Instructions to run the application
 
 To run this spark application we have to run the below mentioned command(provided for both Windows and Linux). In this 
