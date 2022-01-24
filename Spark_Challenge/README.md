@@ -1,6 +1,7 @@
 # LIDL-CASE-STUDY(Spark Challenge)
 
 ## Answers to questions asked as part of case study
+
 ### Can you do a proposal about how to test this job with unit test?
 
 For unit testing we have written a test framework which will do the following testings:
