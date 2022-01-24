@@ -48,15 +48,6 @@ class LoggingException(CustomExceptions):
         self.message = message
 
 
-class ExecuteRestApiException(CustomExceptions):
-    """
-    Exception class for all logging related exceptions
-    """
-    def __init__(self, message: str, *args) -> None:
-        super().__init__(message, *args)
-        self.message = message
-
-
 class ETLException(CustomExceptions):
     """
     Exception class for all etl related exceptions

@@ -2,8 +2,6 @@
 This is the main module which will use all the other modules to create and execute an ETL job.
 """
 import logging
-import sys
-import traceback
 from typing import Tuple
 
 from pyspark.sql.window import Window
@@ -203,7 +201,6 @@ def main() -> None:
     except ArgumentException as ae:
         log.error(ae)
     except ETLException as ee:
-        log.error(traceback.format_exc())
         log.error(ee)
     except ETLJobException as eje:
         log.error(eje)
